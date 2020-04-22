@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Synth App</string>
+
+    <string name="record_on">Start recording</string>
+    <string name="record_off">Stop recording</string>
+
+    <string name="play_on">Start playing</string>
+    <string name="play_off">Stop playing</string>
+</resources>
