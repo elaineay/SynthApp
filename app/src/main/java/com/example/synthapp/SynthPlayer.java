@@ -2,6 +2,7 @@ package com.example.synthapp;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Intent;
@@ -11,10 +12,16 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.io.IOException;
 
 public class SynthPlayer extends AppCompatActivity {
+
+    /* based on android developers documentation for media recording
+    https://developer.android.com/guide/topics/media/mediarecorder
+    * */
 
     private static final String LOG_TAG = "SynthPlayer";
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
@@ -31,11 +38,41 @@ public class SynthPlayer extends AppCompatActivity {
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        // record to external cache directory for visibility
+        fileName = getExternalCacheDir().getAbsolutePath();
+        fileName += "/synthplayer.3gp";
+
+        // TODO: deprecated, helper for accessing features in Activity
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+
+        LinearLayout linearLayout = new LinearLayout(this);
+
+        recordButton = new RecordButton(this);
+        recordButton.setListener(this);
+        linearLayout.addView(recordButton,
+                            new LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    0
+                            ));
+
+        synthButton = new SynthButton(this);
+        synthButton.setListener(this);
+        linearLayout.addView(synthButton,
+                            new LinearLayout.LayoutParams(
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                                    0
+                            ));
+
+        setContentView(linearLayout);
     }
 
+    // TODO: deprecated, good examples here:
+    // https://github.com/android/permissions-samples
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
